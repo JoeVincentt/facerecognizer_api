@@ -2,34 +2,20 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
+const mongoose = require("mongoose");
+
+//Load User model
+require("./User");
+const User = mongoose.model("users");
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const database = {
-  users: [
-    {
-      id: "1",
-      name: "John",
-      email: "john@gmail.com",
-      password: "cookies",
-      entries: 0,
-      joined: new Date()
-    },
-    {
-      id: "2",
-      name: "Sally",
-      email: "sally@gmail.com",
-      password: "bananas",
-      entries: 0,
-      joined: new Date()
-    }
-  ]
-};
-
 app.get("/", (req, res) => {
-  res.send(database.users);
+  User.find((err, users) => {
+    res.send(users);
+  });
 });
 
 //Sign In
@@ -48,15 +34,26 @@ app.post("/signin", (req, res) => {
 app.post("/register", (req, res) => {
   const { email, password, name } = req.body;
 
-  database.users.push({
-    id: "3",
-    name: name,
-    email: email,
-    // password: password,
-    entries: 0,
-    joined: new Date()
-  });
-  res.json(database.users[database.users.length - 1]);
+  const user = new User();
+
+  user.name = name;
+  user.email = email;
+  user.password = password;
+  user
+    .save()
+    .then(console.log(user))
+    .then(res.send(user))
+    .catch(err => console.log(err));
+
+  // database.users.push({
+  //   id: "3",
+  //   name: name,
+  //   email: email,
+  //   // password: password,
+  //   entries: 0,
+  //   joined: new Date()
+  // });
+  // res.json(database.users[database.users.length - 1]);
 });
 
 //Get User by ID
@@ -90,4 +87,13 @@ app.put("/image", (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("Server is running on 3000"));
+mongoose
+  .connect(
+    "mongodb+srv://eugenebutenko:147258369aA@cluster0-pzpqx.mongodb.net/facerecognition?retryWrites=true",
+    { useNewUrlParser: true }
+  )
+  .then(console.log("MongoDB connected"))
+  .then(() => {
+    app.listen(3000, () => console.log("Server is running on 3000"));
+  })
+  .catch(err => console.log(err));
