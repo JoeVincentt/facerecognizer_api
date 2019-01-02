@@ -52,7 +52,7 @@ app.post("/register", (req, res) => {
     id: "3",
     name: name,
     email: email,
-    password: password,
+    // password: password,
     entries: 0,
     joined: new Date()
   });
