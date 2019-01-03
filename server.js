@@ -49,28 +49,13 @@ app.post("/register", (req, res) => {
 //Get User by ID
 app.get("/profile/:id", (req, res) => {
   const _id = req.params.id;
-  User.findOne({ _id }).then(user => {
-    if (user) {
-      res
-        .status(200)
-        .send(user)
-        .catch(err => console.log(err));
-    } else {
-      res.status(404).send("User not Found!");
-    }
-  });
-
-  // const { id } = req.params;
-  // let found = false;
-  // database.users.forEach(user => {
-  //   if (user.id === id) {
-  //     found = true;
-  //     return res.json(user);
-  //   }
-  // });
-  // if (!found) {
-  //   res.status(404).json("not found");
-  // }
+  User.findOne({ _id })
+    .then(user => {
+      if (user) {
+        res.status(200).send(user);
+      }
+    })
+    .catch(err => res.status(404).send("User not Found!"));
 });
 
 //Increase count of uploaded images
