@@ -20,14 +20,28 @@ app.get("/", (req, res) => {
 
 //Sign In
 app.post("/signin", (req, res) => {
-  if (
-    req.body.email === database.users[0].email &&
-    req.body.password === database.users[0].password
-  ) {
-    res.json(database.users[0]);
-  } else {
-    res.status(400).json("Error login in");
-  }
+  User.findOne({ email: req.body.email })
+    .then(user => {
+      if (
+        req.body.email === user.email &&
+        req.body.password === user.password
+      ) {
+        res.status(200).send(user);
+      } else {
+        res.status(400).send("Failed Log In!");
+      }
+    })
+    .catch(err => {
+      res.status(404).send(err);
+    });
+  // if (
+  //   req.body.email === database.users[0].email &&
+  //   req.body.password === database.users[0].password
+  // ) {
+  //   res.json(database.users[0]);
+  // } else {
+  //   res.status(400).json("Error login in");
+  // }
 });
 
 //Register
