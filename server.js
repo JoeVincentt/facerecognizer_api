@@ -43,39 +43,36 @@ app.post("/signin", (req, res) => {
 
 //Register
 app.post("/register", (req, res) => {
-  const newUser = new User({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password
-  });
+  User.findOne({
+    email: req.body.email
+  }).then(user => {
+    if (user) {
+      res.status(400).send("User exists!");
+    } else {
+      const newUser = new User({
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password
+      });
 
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(newUser.password, salt, (err, hash) => {
-      if (err) throw err;
-      newUser.password = hash;
-      newUser
-        .save()
-        .then(use => {
-          res.send(newUser);
-        })
-        .catch(err => {
-          console.log(err);
-          return;
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
+          if (err) throw err;
+          newUser.password = hash;
+          newUser
+            .save()
+            .then(use => {
+              res.send(newUser);
+            })
+            .catch(err => {
+              console.log(err);
+              return;
+            });
         });
-    });
+      });
+      console.log(newUser);
+    }
   });
-  console.log(newUser);
-  // const { email, password, name } = req.body;
-
-  // const user = new User();
-
-  // user.name = name;
-  // user.email = email;
-  // user.password = password;
-  // user
-  //   .save()
-  //   .then(res.send(user))
-  //   .catch(err => console.log(err));
 });
 
 //Get User by ID
