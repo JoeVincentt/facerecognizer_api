@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const bcrypt = require("bcrypt-nodejs");
+const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const mongoose = require("mongoose");
 
@@ -20,35 +20,62 @@ app.get("/", (req, res) => {
 
 //Sign In
 app.post("/signin", (req, res) => {
-  User.findOne({ email: req.body.email })
-    .then(user => {
-      if (
-        req.body.email === user.email &&
-        req.body.password === user.password
-      ) {
-        res.status(200).send(user);
-      } else {
-        res.status(400).send("Failed Log In!");
-      }
-    })
-    .catch(err => {
-      res.status(404).send(err);
-    });
+  User.findOne({ email: req.body.email }).then(user => {
+    if (!user) {
+      res.status(404).send("User not found!");
+      return;
+    }
+
+    bcrypt
+      .compare(req.body.password, user.password)
+      .then(response => {
+        if (response === true) {
+          res.status(200).send("Success login");
+        } else {
+          res.status(400).send("Failed Log In!");
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
 });
 
 //Register
 app.post("/register", (req, res) => {
-  const { email, password, name } = req.body;
+  const newUser = new User({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password
+  });
 
-  const user = new User();
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(newUser.password, salt, (err, hash) => {
+      if (err) throw err;
+      newUser.password = hash;
+      newUser
+        .save()
+        .then(use => {
+          res.send(newUser);
+        })
+        .catch(err => {
+          console.log(err);
+          return;
+        });
+    });
+  });
+  console.log(newUser);
+  // const { email, password, name } = req.body;
 
-  user.name = name;
-  user.email = email;
-  user.password = password;
-  user
-    .save()
-    .then(res.send(user))
-    .catch(err => console.log(err));
+  // const user = new User();
+
+  // user.name = name;
+  // user.email = email;
+  // user.password = password;
+  // user
+  //   .save()
+  //   .then(res.send(user))
+  //   .catch(err => console.log(err));
 });
 
 //Get User by ID
@@ -75,7 +102,6 @@ app.put("/image", (req, res) => {
         console.log("Something wrong when updating data!");
         res.status(404).send("User not Found!");
       }
-      console.log(doc);
       res.status(200).send(doc);
     }
   );
@@ -83,7 +109,7 @@ app.put("/image", (req, res) => {
 
 mongoose
   .connect(
-    "mongodb+srv://eugenebutenko:147258369aA@cluster0-pzpqx.mongodb.net/facerecognition?retryWrites=true",
+    `mongodb+srv://eugenebutenko:147258369aA@cluster0-pzpqx.mongodb.net/facerecognition?retryWrites=true`,
     { useNewUrlParser: true }
   )
   .then(console.log("MongoDB connected"))
