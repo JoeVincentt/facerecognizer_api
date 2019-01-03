@@ -34,14 +34,6 @@ app.post("/signin", (req, res) => {
     .catch(err => {
       res.status(404).send(err);
     });
-  // if (
-  //   req.body.email === database.users[0].email &&
-  //   req.body.password === database.users[0].password
-  // ) {
-  //   res.json(database.users[0]);
-  // } else {
-  //   res.status(400).json("Error login in");
-  // }
 });
 
 //Register
@@ -53,7 +45,6 @@ app.post("/register", (req, res) => {
   user.name = name;
   user.email = email;
   user.password = password;
-  user.entries = 0;
   user
     .save()
     .then(res.send(user))
@@ -74,18 +65,32 @@ app.get("/profile/:id", (req, res) => {
 
 //Increase count of uploaded images
 app.put("/image", (req, res) => {
-  const { id } = req.body;
-  let found = false;
-  database.users.forEach(user => {
-    if (user.id === id) {
-      found = true;
-      user.entries++;
-      return res.json(user.entries);
+  const id = req.body.id;
+  User.findOneAndUpdate(
+    { _id: id },
+    { $inc: { entries: 1 } },
+    { new: true },
+    (err, doc) => {
+      if (err) {
+        console.log("Something wrong when updating data!");
+        res.status(404).send("User not Found!");
+      }
+      console.log(doc);
+      res.status(200).send(doc);
     }
-  });
-  if (!found) {
-    res.status(404).json("not found");
-  }
+  );
+  // const { id } = req.body;
+  // let found = false;
+  // database.users.forEach(user => {
+  //   if (user.id === id) {
+  //     found = true;
+  //     user.entries++;
+  //     return res.json(user.entries);
+  //   }
+  // });
+  // if (!found) {
+  //   res.status(404).json("not found");
+  // }
 });
 
 mongoose

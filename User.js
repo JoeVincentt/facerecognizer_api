@@ -16,7 +16,7 @@ const userSchema = new Schema({
   },
   entries: {
     type: Number,
-    required: true
+    default: 0
   },
   joined: {
     type: Date,
