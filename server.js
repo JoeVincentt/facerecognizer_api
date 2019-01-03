@@ -39,36 +39,38 @@ app.post("/register", (req, res) => {
   user.name = name;
   user.email = email;
   user.password = password;
+  user.entries = 0;
   user
     .save()
-    .then(console.log(user))
     .then(res.send(user))
     .catch(err => console.log(err));
-
-  // database.users.push({
-  //   id: "3",
-  //   name: name,
-  //   email: email,
-  //   // password: password,
-  //   entries: 0,
-  //   joined: new Date()
-  // });
-  // res.json(database.users[database.users.length - 1]);
 });
 
 //Get User by ID
 app.get("/profile/:id", (req, res) => {
-  const { id } = req.params;
-  let found = false;
-  database.users.forEach(user => {
-    if (user.id === id) {
-      found = true;
-      return res.json(user);
+  const _id = req.params.id;
+  User.findOne({ _id }).then(user => {
+    if (user) {
+      res
+        .status(200)
+        .send(user)
+        .catch(err => console.log(err));
+    } else {
+      res.status(404).send("User not Found!");
     }
   });
-  if (!found) {
-    res.status(404).json("not found");
-  }
+
+  // const { id } = req.params;
+  // let found = false;
+  // database.users.forEach(user => {
+  //   if (user.id === id) {
+  //     found = true;
+  //     return res.json(user);
+  //   }
+  // });
+  // if (!found) {
+  //   res.status(404).json("not found");
+  // }
 });
 
 //Increase count of uploaded images
