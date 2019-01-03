@@ -30,7 +30,7 @@ app.post("/signin", (req, res) => {
       .compare(req.body.password, user.password)
       .then(response => {
         if (response === true) {
-          res.status(200).send("Success login");
+          res.status(200).send(user);
         } else {
           res.status(400).send("Failed Log In!");
         }
@@ -70,7 +70,6 @@ app.post("/register", (req, res) => {
             });
         });
       });
-      console.log(newUser);
     }
   });
 });
