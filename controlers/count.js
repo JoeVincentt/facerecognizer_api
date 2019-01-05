@@ -1,3 +1,21 @@
+const Clarifai = require("clarifai");
+
+//User API key
+const app = new Clarifai.App({
+  apiKey: "32e8e3d21c8a4c5ea30a559ef94bcd28"
+});
+
+const handleApiCall = (req, res) => {
+  app.models
+    .predict(Clarifai.FACE_DETECT_MODEL, req.body.input)
+    .then(data => {
+      res.json(data);
+    })
+    .catch(err => {
+      res.status(400).json("unable to fetch data from api");
+    });
+};
+
 const countHandle = (req, res, User) => {
   const id = req.body.id;
   User.findOneAndUpdate(
@@ -7,11 +25,11 @@ const countHandle = (req, res, User) => {
     (err, doc) => {
       if (err) {
         console.log("Something wrong when updating data!");
-        res.status(404).send("User not Found!");
+        res.status(404).json("User not Found!");
       }
       res.status(200).send(doc);
     }
   );
 };
 
-module.exports = countHandle;
+module.exports = { countHandle, handleApiCall };

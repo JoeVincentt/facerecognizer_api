@@ -44,6 +44,11 @@ app.put("/image", (req, res) => {
   count.countHandle(req, res, User);
 });
 
+//Image handle request
+app.post("/imageurl", (req, res) => {
+  count.handleApiCall(req, res);
+});
+
 mongoose
   .connect(
     `mongodb+srv://eugenebutenko:147258369aA@cluster0-pzpqx.mongodb.net/facerecognition?retryWrites=true`,
