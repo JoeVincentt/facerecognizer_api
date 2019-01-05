@@ -51,7 +51,7 @@ app.post("/imageurl", (req, res) => {
 
 mongoose
   .connect(
-    `mongodb+srv://eugenebutenko:147258369aA@cluster0-pzpqx.mongodb.net/facerecognition?retryWrites=true`,
+    process.env.MONGO,
     { useNewUrlParser: true }
   )
   .then(console.log("MongoDB connected"))
