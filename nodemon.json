@@ -3,6 +3,7 @@
     "MONGO_USER": "eugenebutenko",
     "MONGO_PASSWORD": "147258369aA",
     "MONGO_DB": "facerecognition",
-    "MONGO": "mongodb+srv://eugenebutenko:147258369aA@cluster0-pzpqx.mongodb.net/facerecognition?retryWrites=true"
+    "MONGO": "mongodb+srv://eugenebutenko:147258369aA@cluster0-pzpqx.mongodb.net/facerecognition?retryWrites=true",
+    "CLARIFAI_API_KEY": "32e8e3d21c8a4c5ea30a559ef94bcd28"
   }
 }
